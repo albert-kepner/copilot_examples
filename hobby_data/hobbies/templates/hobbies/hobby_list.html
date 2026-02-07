@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load tz %}
 {% block title %}Hobbies{% endblock %}
 {% block content %}
   <p><a href="{% url 'hobby-add' %}">Add hobby</a></p>
@@ -17,7 +18,7 @@
           <tr>
             <td><a href="{% url 'hobby-detail' hobby.pk %}">{{ hobby.name }}</a></td>
             <td>{{ hobby.category }}</td>
-            <td>{{ hobby.date_updated|date:"Y-m-d H:i" }}</td>
+            <td>{{ hobby.date_updated|localtime|date:"Y-m-d H:i" }}</td>
             <td class="actions">
               <a href="{% url 'hobby-edit' hobby.pk %}">Edit</a>
               <a href="{% url 'hobby-delete' hobby.pk %}">Delete</a>

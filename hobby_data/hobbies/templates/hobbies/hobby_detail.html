@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load tz %}
 {% block title %}{{ object.name }}{% endblock %}
 {% block content %}
   <p class="muted">Category: {{ object.category }}</p>
@@ -28,7 +29,7 @@
           <tr>
             <td>{% if detail.name %}{{ detail.name }}{% else %}<span class="muted">(no name)</span>{% endif %}</td>
             <td>{% if detail.category %}{{ detail.category }}{% else %}<span class="muted">-</span>{% endif %}</td>
-            <td>{{ detail.date_updated|date:"Y-m-d H:i" }}</td>
+            <td>{{ detail.date_updated|localtime|date:"Y-m-d H:i" }}</td>
             <td class="actions">
               <a href="{% url 'hobby-detail-edit' object.pk detail.pk %}">Edit</a>
               <a href="{% url 'hobby-detail-delete' object.pk detail.pk %}">Delete</a>
@@ -40,7 +41,7 @@
   {% else %}
     <p class="muted">No details yet.</p>
   {% endif %}
-  <p class="muted">Created: {{ object.date_created|date:"Y-m-d H:i" }} | Updated: {{ object.date_updated|date:"Y-m-d H:i" }}</p>
+  <p class="muted">Created: {{ object.date_created|date:"Y-m-d H:i" }} | Updated: {{ object.date_updated|localtime|date:"Y-m-d H:i" }}</p>
   <p class="actions">
     <a href="{% url 'hobby-edit' object.pk %}">Edit</a>
     <a href="{% url 'hobby-delete' object.pk %}">Delete</a>
