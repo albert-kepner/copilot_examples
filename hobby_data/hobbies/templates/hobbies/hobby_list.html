@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Hobbies{% endblock %}
+{% block content %}
+  <p><a href="{% url 'hobby-add' %}">Add hobby</a></p>
+  {% if hobby_list %}
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Category</th>
+          <th>Updated</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for hobby in hobby_list %}
+          <tr>
+            <td><a href="{% url 'hobby-detail' hobby.pk %}">{{ hobby.name }}</a></td>
+            <td>{{ hobby.category }}</td>
+            <td>{{ hobby.date_updated|date:"Y-m-d H:i" }}</td>
+            <td class="actions">
+              <a href="{% url 'hobby-edit' hobby.pk %}">Edit</a>
+              <a href="{% url 'hobby-delete' hobby.pk %}">Delete</a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p class="muted">No hobbies added yet.</p>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}{{ object.name }}{% endblock %}
+{% block content %}
+  <p class="muted">Category: {{ object.category }}</p>
+  {% if object.description %}
+    <p><strong>Description:</strong><br>{{ object.description|linebreaksbr }}</p>
+  {% endif %}
+  {% if object.url %}
+    <p><strong>URL:</strong> <a href="{{ object.url }}">{{ object.url }}</a></p>
+  {% endif %}
+  {% if object.notes %}
+    <p><strong>Notes:</strong><br>{{ object.notes|linebreaksbr }}</p>
+  {% endif %}
+  <p class="muted">Created: {{ object.date_created|date:"Y-m-d H:i" }} | Updated: {{ object.date_updated|date:"Y-m-d H:i" }}</p>
+  <p class="actions">
+    <a href="{% url 'hobby-edit' object.pk %}">Edit</a>
+    <a href="{% url 'hobby-delete' object.pk %}">Delete</a>
+  </p>
+{% endblock %}

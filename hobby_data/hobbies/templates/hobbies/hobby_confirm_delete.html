@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Delete Hobby{% endblock %}
+{% block content %}
+  <p>Are you sure you want to delete "{{ object.name }}"?</p>
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit">Confirm delete</button>
+    <a href="{% url 'hobby-detail' object.pk %}">Cancel</a>
+  </form>
+{% endblock %}
