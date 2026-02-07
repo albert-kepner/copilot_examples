@@ -11,6 +11,35 @@
   {% if object.notes %}
     <p><strong>Notes:</strong><br>{{ object.notes|linebreaksbr }}</p>
   {% endif %}
+  <h2>Details</h2>
+  <p><a href="{% url 'hobby-detail-add' object.pk %}">Add detail</a></p>
+  {% if details %}
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Category</th>
+          <th>Updated</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for detail in details %}
+          <tr>
+            <td>{% if detail.name %}{{ detail.name }}{% else %}<span class="muted">(no name)</span>{% endif %}</td>
+            <td>{% if detail.category %}{{ detail.category }}{% else %}<span class="muted">-</span>{% endif %}</td>
+            <td>{{ detail.date_updated|date:"Y-m-d H:i" }}</td>
+            <td class="actions">
+              <a href="{% url 'hobby-detail-edit' object.pk detail.pk %}">Edit</a>
+              <a href="{% url 'hobby-detail-delete' object.pk detail.pk %}">Delete</a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p class="muted">No details yet.</p>
+  {% endif %}
   <p class="muted">Created: {{ object.date_created|date:"Y-m-d H:i" }} | Updated: {{ object.date_updated|date:"Y-m-d H:i" }}</p>
   <p class="actions">
     <a href="{% url 'hobby-edit' object.pk %}">Edit</a>

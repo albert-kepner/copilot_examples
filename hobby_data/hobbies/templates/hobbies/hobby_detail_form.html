@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}{% if object %}Edit{% else %}Add{% endif %} Detail{% endblock %}
+{% block content %}
+  <p class="muted">Hobby: <a href="{% url 'hobby-detail' hobby.pk %}">{{ hobby.name }}</a></p>
+  <p class="muted">Provide at least one field below.</p>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save</button>
+    <a href="{% url 'hobby-detail' hobby.pk %}">Cancel</a>
+  </form>
+{% endblock %}

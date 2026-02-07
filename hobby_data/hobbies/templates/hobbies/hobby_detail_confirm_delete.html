@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Delete Detail{% endblock %}
+{% block content %}
+  <p class="muted">Hobby: <a href="{% url 'hobby-detail' hobby.pk %}">{{ hobby.name }}</a></p>
+  <p>Are you sure you want to delete this detail?</p>
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit">Confirm delete</button>
+    <a href="{% url 'hobby-detail' hobby.pk %}">Cancel</a>
+  </form>
+{% endblock %}
