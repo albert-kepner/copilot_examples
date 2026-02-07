@@ -20,6 +20,7 @@
         <tr>
           <th>Name</th>
           <th>Category</th>
+          <th>URL</th>
           <th>Updated</th>
           <th>Actions</th>
         </tr>
@@ -29,6 +30,13 @@
           <tr>
             <td>{% if detail.name %}{{ detail.name }}{% else %}<span class="muted">(no name)</span>{% endif %}</td>
             <td>{% if detail.category %}{{ detail.category }}{% else %}<span class="muted">-</span>{% endif %}</td>
+            <td>
+              {% if detail.url %}
+                <a href="{{ detail.url }}">{{ detail.url }}</a>
+              {% else %}
+                <span class="muted">-</span>
+              {% endif %}
+            </td>
             <td>{{ detail.date_updated|localtime|date:"Y-m-d H:i" }}</td>
             <td class="actions">
               <a href="{% url 'hobby-detail-edit' object.pk detail.pk %}">Edit</a>

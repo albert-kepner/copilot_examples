@@ -9,6 +9,7 @@
         <tr>
           <th>Name</th>
           <th>Category</th>
+          <th>URL</th>
           <th>Updated</th>
           <th>Actions</th>
         </tr>
@@ -18,6 +19,13 @@
           <tr>
             <td><a href="{% url 'hobby-detail' hobby.pk %}">{{ hobby.name }}</a></td>
             <td>{{ hobby.category }}</td>
+            <td>
+              {% if hobby.url %}
+                <a href="{{ hobby.url }}">{{ hobby.url }}</a>
+              {% else %}
+                <span class="muted">-</span>
+              {% endif %}
+            </td>
             <td>{{ hobby.date_updated|localtime|date:"Y-m-d H:i" }}</td>
             <td class="actions">
               <a href="{% url 'hobby-edit' hobby.pk %}">Edit</a>
