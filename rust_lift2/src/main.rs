@@ -107,6 +107,12 @@ impl LiftState {
     }
 
     fn unload_riders(&mut self, floor: usize) -> Option<u32> {
+        let riders_before = self.riders.len();
+        self.riders.retain(|&x| x != (floor as u32));
+        let riders_after = self.riders.len();
+        if riders_after < riders_before {
+            return Some(floor as u32);
+        }
         None
     }
 
