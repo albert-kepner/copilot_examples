@@ -3,6 +3,8 @@ fn main() {
     println!("{:?}", the_lift(&[vec![], vec![], vec![5,5,5],vec![],vec![],vec![],vec![]], 5));
 }
 
+use std::collections::VecDeque;
+
 fn the_lift(queues: &[Vec<u32>], capacity: u32) -> Vec<u32> {
     let mut lift_state: LiftState = LiftState::new(queues, capacity);
     print_queues(&lift_state.up_queues, &lift_state.down_queues, lift_state.capacity, &lift_state.riders);
@@ -94,10 +96,17 @@ impl LiftState {
         let mut stop_requested: bool = false;
         match self.direction {
             Direction::Up => {
+                if self.up_queues.len() > 0 {
+                    stop_requested = true;
+                }
+                while self.up_queues.len() > 0 && self.riders.len() < (self.capacity as usize) {
 
+                }
             }
             Direction::Down => {
-
+                if self.down_queues.len() > 0 {
+                    stop_requested = true;
+                }
             }
         }
         if stop_requested {
