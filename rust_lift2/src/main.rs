@@ -56,8 +56,8 @@ struct LiftState {
     capacity: u32,
     floor: u32,
     riders: Vec<u32>,
-    up_queues: Vec<Vec<u32>>,
-    down_queues: Vec<Vec<u32>>,
+    up_queues: Vec<VecDeque<u32>>,
+    down_queues: Vec<VecDeque<u32>>,
 }
 
 impl LiftState {
@@ -76,14 +76,14 @@ impl LiftState {
 
     fn init_queues(&mut self, queues: &[Vec<u32>]) -> () {
         for floor in 0..queues.len() {
-            let mut up_queue: Vec<u32> = vec![];
-            let mut down_queue: Vec<u32> = vec![];
+            let mut up_queue: VecDeque<u32> = VecDeque::new();
+            let mut down_queue: VecDeque<u32> = VecDeque::new();
             for item in queues[floor].clone()  {
                 if item > (floor as u32) {
-                    up_queue.push(item);
+                    up_queue.push_back(item);
                 }
                 if item < (floor as u32) {
-                    down_queue.push(item)
+                    down_queue.push_back(item)
                 }
             }
             self.up_queues.push(up_queue);
@@ -96,16 +96,23 @@ impl LiftState {
         let mut stop_requested: bool = false;
         match self.direction {
             Direction::Up => {
-                if self.up_queues.len() > 0 {
+                if self.up_queues[floor].len() > 0 {
                     stop_requested = true;
                 }
-                while self.up_queues.len() > 0 && self.riders.len() < (self.capacity as usize) {
-
+                while self.up_queues[floor].len() > 0 && self.riders.len() < (self.capacity as usize) {
+                    if let Some(rider) = self.up_queues[floor].pop_front() {
+                        self.riders.push(rider);
+                    }
                 }
             }
             Direction::Down => {
-                if self.down_queues.len() > 0 {
+                if self.down_queues[floor].len() > 0 {
                     stop_requested = true;
+                }
+                while self.down_queues[floor].len() > 0 && self.riders.len() < (self.capacity as usize) {
+                    if let Some(rider) = self.down_queues[floor].pop_front() {
+                        self.riders.push(rider);
+                    }
                 }
             }
         }
@@ -127,7 +134,7 @@ impl LiftState {
 
 }
 
-fn print_queues(up_queues: &Vec<Vec<u32>>, down_queues: &Vec<Vec<u32>>, capacity: u32, riders: &Vec<u32>) -> String {
+fn print_queues(up_queues: &Vec<VecDeque<u32>>, down_queues: &Vec<VecDeque<u32>>, capacity: u32, riders: &Vec<u32>) -> String {
     let mut result = format!("\nLift capacity = {capacity}\n\n Floor    Queue");
     for (i, q) in up_queues.iter().enumerate().rev() {
         result.push_str(&format!("\n{i:>4} .... {q:?} up"));
