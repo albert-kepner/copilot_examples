@@ -5,11 +5,42 @@ fn main() {
 
 fn the_lift(queues: &[Vec<u32>], capacity: u32) -> Vec<u32> {
     let mut lift_state: LiftState = LiftState::new(queues, capacity);
-    let mut v: Vec<u32> = vec![];
-    
-    println!("{:?}", v);
-    v
+    print_queues(&lift_state.up_queues, &lift_state.down_queues, lift_state.capacity, &lift_state.riders);
+    let mut stops: Vec<u32> = vec![];
+    stops.push(0);
+
+    let mut previous_stops: usize = 0;
+    let mut current_stops: usize = stops.len();
+
+    while current_stops > previous_stops {
+        previous_stops = current_stops;
+        for floor in 0..lift_state.up_queues.len()-1{
+            if let Some(stop) = lift_state.stop_at(floor) {
+                if stops[stops.len()-1] != stop {
+                    stops.push(stop);
+                }
+            }
+        }
+        lift_state.direction = Direction::Down;
+        for floor in (1..lift_state.down_queues.len()).rev() {
+            if let Some(stop) = lift_state.stop_at(floor) {
+                if stops[stops.len()-1] != stop {
+                    stops.push(stop);
+                }
+            }
+        }
+        lift_state.direction = Direction::Up;
+        current_stops = stops.len();   
+    }
+    // When there are no more requests the elevator stops on floor zero.
+    if stops[stops.len()-1] != 0 {
+        stops.push(0);
+    }
+
+    println!("{:?}", stops);
+    stops
 }
+
 
 #[derive(Debug)]
 enum Direction {
@@ -29,7 +60,7 @@ struct LiftState {
 
 impl LiftState {
     pub fn new(queues: &[Vec<u32>], capacity: u32) -> Self {
-        let my_self = Self {
+        let mut my_self = Self {
             direction: Direction::Up,
             capacity: capacity,
             floor: 0,
@@ -37,6 +68,7 @@ impl LiftState {
             up_queues: vec![],
             down_queues: vec![],
         };
+        my_self.init_queues(queues);
         my_self
     }
 
@@ -57,4 +89,21 @@ impl LiftState {
         }
     }
 
+    fn stop_at(&mut self, floor: usize) -> Option<u32> {
+        None
+    }
+
+}
+
+fn print_queues(up_queues: &Vec<Vec<u32>>, down_queues: &Vec<Vec<u32>>, capacity: u32, riders: &Vec<u32>) -> String {
+    let mut result = format!("\nLift capacity = {capacity}\n\n Floor    Queue");
+    for (i, q) in up_queues.iter().enumerate().rev() {
+        result.push_str(&format!("\n{i:>4} .... {q:?} up"));
+    }    
+    for (i, q) in down_queues.iter().enumerate().rev() {
+        result.push_str(&format!("\n{i:>4} .... {q:?} down"));
+    }
+    result.push_str(&format!("\n riders: {:?}", riders));
+    println!("{}", result);
+    result
 }
