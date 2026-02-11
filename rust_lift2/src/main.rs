@@ -90,6 +90,23 @@ impl LiftState {
     }
 
     fn stop_at(&mut self, floor: usize) -> Option<u32> {
+        let unloaded_at: Option<u32> = self.unload_riders(floor);
+        let mut stop_requested: bool = false;
+        match self.direction {
+            Direction::Up => {
+
+            }
+            Direction::Down => {
+
+            }
+        }
+        if stop_requested {
+            return Some(floor as u32);
+        }
+        return unloaded_at;
+    }
+
+    fn unload_riders(&mut self, floor: usize) -> Option<u32> {
         None
     }
 
