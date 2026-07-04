@@ -46,7 +46,9 @@ class ClusterState:
         Returns:
             The next ascending integer cluster ID.
         """
-        pass  # TODO: implement
+        cluster_id = self.next_cluster_id
+        self.next_cluster_id += 1
+        return cluster_id
 
     def add_record(
         self,
@@ -77,5 +79,63 @@ class ClusterState:
             business:   The McKesson business unit submitting this record.
             record_ids: A tuple of (npi, ncpdp, dea).
         """
-        pass  # TODO: implement
+        self._validate_record_ids(record_ids)
+
+        matching_cluster_ids = self._get_matching_cluster_ids(record_ids)
+
+        new_cluster = Cluster(business=business, record_ids=record_ids)
+        new_cluster.cluster_id = self.get_next_cluster_id()
+
+        if not matching_cluster_ids:
+            self._register_cluster(new_cluster)
+            return
+
+        survivor_id = min(matching_cluster_ids)
+        survivor = self.cluster_id_to_cluster[survivor_id]
+
+        for cluster_id in sorted(matching_cluster_ids):
+            if cluster_id == survivor_id:
+                continue
+            absorbed = self.cluster_id_to_cluster[cluster_id]
+            survivor.merge_from(absorbed)
+            self._repoint_indexes_for_cluster(absorbed, survivor_id)
+            del self.cluster_id_to_cluster[cluster_id]
+
+        survivor.merge_from(new_cluster)
+        self._repoint_indexes_for_cluster(new_cluster, survivor_id)
+
+    @staticmethod
+    def _validate_record_ids(
+        record_ids: tuple[str | None, str | None, str | None],
+    ) -> None:
+        if all(identifier is None for identifier in record_ids):
+            raise ValueError("record_ids cannot be all None")
+
+    def _get_matching_cluster_ids(
+        self,
+        record_ids: tuple[str | None, str | None, str | None],
+    ) -> set[int]:
+        npi, ncpdp, dea = record_ids
+        matches: set[int] = set()
+
+        if npi is not None and npi in self.npi_to_cluster:
+            matches.add(self.npi_to_cluster[npi])
+        if ncpdp is not None and ncpdp in self.ncpdp_to_cluster:
+            matches.add(self.ncpdp_to_cluster[ncpdp])
+        if dea is not None and dea in self.dea_to_cluster:
+            matches.add(self.dea_to_cluster[dea])
+
+        return matches
+
+    def _register_cluster(self, cluster: Cluster) -> None:
+        self.cluster_id_to_cluster[cluster.cluster_id] = cluster
+        self._repoint_indexes_for_cluster(cluster, cluster.cluster_id)
+
+    def _repoint_indexes_for_cluster(self, cluster: Cluster, cluster_id: int) -> None:
+        for npi in cluster.npi_set:
+            self.npi_to_cluster[npi] = cluster_id
+        for ncpdp in cluster.ncpdp_set:
+            self.ncpdp_to_cluster[ncpdp] = cluster_id
+        for dea in cluster.dea_set:
+            self.dea_to_cluster[dea] = cluster_id
 

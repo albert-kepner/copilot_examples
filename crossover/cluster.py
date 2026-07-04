@@ -58,7 +58,10 @@ class Cluster:
         self.npi_set: set[str] = set()
         self.ncpdp_set: set[str] = set()
         self.dea_set: set[str] = set()
-        pass  # TODO: implement
+
+        self._validate_record_ids(record_ids)
+        self._add_record_ids(record_ids)
+        self.customer_record_counts[business.value] = 1
 
     def merge_from(self, other: Cluster) -> None:
         """Absorb another cluster into this one (pairwise merge).
@@ -72,5 +75,33 @@ class Cluster:
             other: The cluster to be absorbed.  It should not be used after
                    this call.
         """
-        pass  # TODO: implement
+        if self is other:
+            return
+
+        self.npi_set.update(other.npi_set)
+        self.ncpdp_set.update(other.ncpdp_set)
+        self.dea_set.update(other.dea_set)
+
+        for business_name, count in other.customer_record_counts.items():
+            self.customer_record_counts[business_name] += count
+
+    @staticmethod
+    def _validate_record_ids(
+        record_ids: tuple[str | None, str | None, str | None],
+    ) -> None:
+        if all(identifier is None for identifier in record_ids):
+            raise ValueError("record_ids cannot be all None")
+
+    def _add_record_ids(
+        self,
+        record_ids: tuple[str | None, str | None, str | None],
+    ) -> None:
+        npi, ncpdp, dea = record_ids
+
+        if npi is not None:
+            self.npi_set.add(npi)
+        if ncpdp is not None:
+            self.ncpdp_set.add(ncpdp)
+        if dea is not None:
+            self.dea_set.add(dea)
 
