@@ -107,3 +107,46 @@ Added a simple test suite with 8 readable scenarios and per-test output.
 - Ran the tests with output enabled; all 8 passed.
 
 
+---
+
+## Prompt 5
+
+**User:**
+Yes please add a new test suite. As suggested:
+
+**Assistant:**
+Created a second-pass, more complex test suite and executed it.
+
+- Added `tests/test_complex_cases.py` with 8 complex scenarios, each starting from a fresh `ClusterState()` and printing:
+  - intended outcome
+  - input records
+  - resulting cluster identifiers/sets
+  - `customer_record_counts`
+- Scenarios include:
+  - all-`None` record rejection
+  - one-record merge of three clusters
+  - survivor-ID selection behavior
+  - index repoint checks after merges
+  - transitive chain merging across id types
+  - duplicate bridge record behavior
+  - merged cluster + unrelated cluster coexistence
+  - cluster ID counter progression after merges
+- Ran `pytest -q -s tests/test_complex_cases.py`; all 8 tests passed.
+
+
+---
+
+## Prompt 6
+
+**User:**
+Yes plase create tests/README.md
+
+**Assistant:**
+Created `tests/README.md` with:
+
+- short overview of the two test suites
+- what each test prints (intended outcome, input records, resulting clusters, ids, counts)
+- copyable PowerShell commands to run simple, complex, or all tests
+- notes about `tests/conftest.py` import behavior and `-s` output mode
+
+
